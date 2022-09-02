@@ -64,16 +64,19 @@ public class UserServiceImp implements UserDetailsService, UserService {
 
     public boolean updateById (User user, Long id) {
 
-        Optional<User> userFromDB = userRepository.findById(id);
+       User userFromDB = userRepository.findById(id).orElse(null);
 
-        if (userFromDB.isEmpty()) {
+        if (userFromDB == null) {
             return false;
         }
-        user.setId(id);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles(user.getRoles());
-        userRepository.save(user);
-        return true;
+        else {
+            user.setId(userFromDB.getId());
+            user.setPassword(userFromDB.getPassword());
+            userRepository.save(user);
+            return true;
+
+        }
+
     }
 
     public User findById (Long id){
